@@ -1,0 +1,21 @@
+#!/bin/sh
+
+LOG_FILE=mozmill.log
+
+PROFILE_DIR=profile
+PROFILE_SOURCE_DIR=$PROFILE_DIR/source
+PROFILE_THIS_TEST_DIR=$PROFILE_DIR/offline_data_allowed_sites
+
+rm -f $LOG_FILE
+
+rm -rf $PROFILE_THIS_TEST_DIR/*
+# Make it skip the startup pages and dialogs ("Congratulations you've just
+# installed # Firefox", "This is Free software", etc.)
+cp $PROFILE_SOURCE_DIR/prefs.js $PROFILE_THIS_TEST_DIR
+# Add the test site URL in the allowed sites list for offline data storage
+cp $PROFILE_SOURCE_DIR/permissions.sqlite $PROFILE_THIS_TEST_DIR
+
+mozmill --show-all --show-errors --debug --logfile=$LOG_FILE -t test_appcache_ajax.js \
+--profile=$PROFILE_THIS_TEST_DIR
+
+
